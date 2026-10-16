@@ -130,24 +130,26 @@ def calculate_compatibility(p1, p2):
 
 def get_conversation_prompt(p1, p2, match_info):
     """Generate a fun icebreaker prompt for the matched pair."""
+    p1_wants = 'wants' if p1.wants_offspring else "isn't looking for"
+    p2_wants = 'wants' if p2.wants_offspring else "isn't looking for"
+
     prompts = [
-        f"🐴 {p1.display_name} and {p2.display_name} both love {p1.riding_discipline or 'trail riding'}! "
+        f"{p1.display_name} and {p2.display_name} both love {p1.riding_discipline or 'trail riding'}! "
         f"Ask each other about your best ride ever!",
 
-        f"☕ Since you're both in the {p1.stable_region or 'same'} area — "
+        f"Since you're both in the {p1.stable_region or 'same'} area — "
         f"who has the best grazing spot nearby?",
 
-        f"🎯 You matched {match_info['score']}%! Who wants to share their "
+        f"You matched {match_info['score']}%! Who wants to share their "
         f"favorite treat first? {p1.favorite_treat or 'Carrots'}? {p2.favorite_treat or 'Apples'}?",
 
-        f"🌅 {p1.display_name} {'wants' if p1.wants_offspring else 'isn\'t looking for'} foals "
-        f"and {p2.display_name} {'wants' if p2.wants_offspring else 'isn\'t looking for'} foals. "
+        f"{p1.display_name} {p1_wants} foals and {p2.display_name} {p2_wants} foals. "
         f"Great starting point for a conversation!",
 
-        f"🏆 Both {p1.breed or 'horse'} lovers! What's the one thing about "
+        f"Both {p1.breed or 'horse'} lovers! What's the one thing about "
         f"{p1.breed or 'your breed'} that nobody understands?",
 
-        f"🎠 {p1.temperament or 'Gentle'} meets {p2.temperament or 'Spirited'}! "
+        f"{p1.temperament or 'Gentle'} meets {p2.temperament or 'Spirited'}! "
         f"Opposite temperaments often make the best trail buddies. What's your dream ride?",
     ]
 
@@ -156,7 +158,7 @@ def get_conversation_prompt(p1, p2, match_info):
     if 'Same discipline' in match_info.get('reasons', []):
         return prompts[0]
     if match_info.get('score', 0) > 75:
-        return f"⚡ {match_info['score']}% match — that's almost unheard of! "
+        return f"{match_info['score']}% match - that's almost unheard of! " \
                f"What drew you to {p1.display_name}'s profile?"
 
     return random.choice(prompts)

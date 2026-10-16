@@ -82,7 +82,7 @@ BIO_TEMPLATES = [
     "Gentle soul here. I enjoy long trail rides, sunsets in the pasture, and the occasional sugar cube. Looking for a meaningful connection.",
     "Competitive {breed} with {experience} experience. When I'm not training for {discipline}, you'll find me grazing and enjoying the view.",
     "Easy-going {temperament} mare/stallion looking for my other half. I believe the best relationships start with a good gallop together.",
-    "{temperament|title} and {experience} level. Love exploring new trails and making new friends. Bonus points if you bring carrots.",
+    "{temperament} and {experience} level. Love exploring new trails and making new friends. Bonus points if you bring carrots.",
     "Show horse by day, romantic at heart. Looking for someone who understands the thrill of {discipline} and the peace of a quiet stable night.",
     "Just a {coat_color} {breed} looking for love in all the right pastures. I'm told I have a great mane and an even better personality.",
     "Life is better with someone to share it with. I love {activity} and dream of finding a partner who values trust and companionship.",

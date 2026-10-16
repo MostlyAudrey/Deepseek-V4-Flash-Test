@@ -5,7 +5,7 @@ load_dotenv()
 
 class Config:
     SECRET_KEY = os.getenv('SECRET_KEY', 'dev-secret-change-in-prod')
-    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', 'postgresql://horseuser:horsepwd@localhost:5432/horsetinder')
+    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', 'sqlite:///horsetinder.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     
     # Google OAuth
