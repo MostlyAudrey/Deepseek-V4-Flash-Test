@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center mt-4">
+    <div class="col-md-8">
+        <div class="card horse-card">
+            <div class="card-body p-5">
+                <div class="text-center mb-4">
+                    <div class="hero-icon">🐎</div>
+                    <h2 class="brand">{% if profile %}Edit Your Profile{% else %}Create Your Horse Profile{% endif %}</h2>
+                    <p class="text-muted">Tell us about yourself (or your horse self!)</p>
+                </div>
+
+                <form method="POST">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Display Name *</label>
+                            <input type="text" name="display_name" class="form-control" value="{{ profile.display_name if profile else '' }}" required>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Age</label>
+                            <input type="number" name="age" class="form-control" value="{{ profile.age if profile else '' }}" min="1" max="40">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Height (hands)</label>
+                            <input type="number" step="0.1" name="height_hands" class="form-control" value="{{ profile.height_hands if profile else '' }}" min="8" max="20" placeholder="e.g. 16.2">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Bio</label>
+                        <textarea name="bio" class="form-control" rows="3" placeholder="Describe yourself — your personality, what you're looking for, your finest gallop...">{{ profile.bio if profile else '' }}</textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Photo URL</label>
+                        <input type="url" name="photo_url" class="form-control" value="{{ profile.photo_url if profile else '' }}" placeholder="https://example.com/horse-photo.jpg">
+                        <small class="text-muted">Link to a photo of yourself</small>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Gender</label>
+                            <select name="gender" class="form-select">
+                                <option value="">Select...</option>
+                                <option value="mare" {% if profile and profile.gender == 'mare' %}selected{% endif %}>Mare</option>
+                                <option value="stallion" {% if profile and profile.gender == 'stallion' %}selected{% endif %}>Stallion</option>
+                                <option value="gelding" {% if profile and profile.gender == 'gelding' %}selected{% endif %}>Gelding</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Breed</label>
+                            <input type="text" name="breed" class="form-control" value="{{ profile.breed if profile else '' }}" placeholder="e.g. Thoroughbred, Quarter Horse, Arabian">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Coat Color</label>
+                            <input type="text" name="coat_color" class="form-control" value="{{ profile.coat_color if profile else '' }}" placeholder="e.g. Bay, Chestnut, Palomino, Black">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Markings</label>
+                            <input type="text" name="markings" class="form-control" value="{{ profile.markings if profile else '' }}" placeholder="e.g. Star, Blaze, Socks, None">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Experience Level</label>
+                            <select name="experience_level" class="form-select">
+                                <option value="">Select...</option>
+                                <option value="beginner" {% if profile and profile.experience_level == 'beginner' %}selected{% endif %}>Beginner</option>
+                                <option value="intermediate" {% if profile and profile.experience_level == 'intermediate' %}selected{% endif %}>Intermediate</option>
+                                <option value="advanced" {% if profile and profile.experience_level == 'advanced' %}selected{% endif %}>Advanced</option>
+                                <option value="expert" {% if profile and profile.experience_level == 'expert' %}selected{% endif %}>Expert</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Riding Discipline</label>
+                            <select name="riding_discipline" class="form-select">
+                                <option value="">Select...</option>
+                                <option value="dressage" {% if profile and profile.riding_discipline == 'dressage' %}selected{% endif %}>Dressage</option>
+                                <option value="jumping" {% if profile and profile.riding_discipline == 'jumping' %}selected{% endif %}>Jumping</option>
+                                <option value="eventing" {% if profile and profile.riding_discipline == 'eventing' %}selected{% endif %}>Eventing</option>
+                                <option value="western" {% if profile and profile.riding_discipline == 'western' %}selected{% endif %}>Western</option>
+                                <option value="trail" {% if profile and profile.riding_discipline == 'trail' %}selected{% endif %}>Trail Riding</option>
+                                <option value="endurance" {% if profile and profile.riding_discipline == 'endurance' %}selected{% endif %}>Endurance</option>
+                                <option value="racing" {% if profile and profile.riding_discipline == 'racing' %}selected{% endif %}>Racing</option>
+                                <option value="barrel" {% if profile and profile.riding_discipline == 'barrel' %}selected{% endif %}>Barrel Racing</option>
+                                <option value="driving" {% if profile and profile.riding_discipline == 'driving' %}selected{% endif %}>Driving</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Temperament</label>
+                            <select name="temperament" class="form-select">
+                                <option value="">Select...</option>
+                                <option value="calm" {% if profile and profile.temperament == 'calm' %}selected{% endif %}>Calm & Steady</option>
+                                <option value="gentle" {% if profile and profile.temperament == 'gentle' %}selected{% endif %}>Gentle</option>
+                                <option value="eager" {% if profile and profile.temperament == 'eager' %}selected{% endif %}>Eager to Please</option>
+                                <option value="spirited" {% if profile and profile.temperament == 'spirited' %}selected{% endif %}>Spirited</option>
+                                <option value="playful" {% if profile and profile.temperament == 'playful' %}selected{% endif %}>Playful</option>
+                                <option value="independent" {% if profile and profile.temperament == 'independent' %}selected{% endif %}>Independent</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Stable Region</label>
+                            <input type="text" name="stable_region" class="form-control" value="{{ profile.stable_region if profile else '' }}" placeholder="e.g. Kentucky, Ireland, California">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Ideal Date Activity</label>
+                            <input type="text" name="ideal_date_activity" class="form-control" value="{{ profile.ideal_date_activity if profile else '' }}" placeholder="e.g. Trail ride, pasture grazing, arena work">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Favorite Treat</label>
+                            <input type="text" name="favorite_treat" class="form-control" value="{{ profile.favorite_treat if profile else '' }}" placeholder="e.g. Carrots, Apples, Sugar cubes">
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <div class="form-check">
+                            <input type="checkbox" name="wants_offspring" class="form-check-input" id="wantsOffspring"
+                            {% if profile and profile.wants_offspring %}checked{% endif %}>
+                            <label class="form-check-label" for="wantsOffspring">Interested in having foals?</label>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-horse w-100">
+                        {% if profile %}Save Changes{% else %}Create Profile & Start Matching{% endif %}
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

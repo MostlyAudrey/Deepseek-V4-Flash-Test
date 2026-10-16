@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center mt-4">
+    <div class="col-md-6">
+        {% if candidate %}
+        <div class="text-center mb-3">
+            <span class="badge-score">Match Score: {{ match_result.score }}%</span>
+            <small class="d-block text-muted mt-1">
+                {% for reason in match_result.reasons %}
+                <span class="badge bg-light text-dark me-1">{{ reason }}</span>
+                {% endfor %}
+            </small>
+        </div>
+
+        <div class="card horse-card">
+            {% if candidate.horse_profile.photo_url %}
+            <img src="{{ candidate.horse_profile.photo_url }}" class="profile-img" alt="{{ candidate.horse_profile.display_name }}"
+                 onerror="this.onerror=null;this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22400%22><rect fill=%22%23f0d9b5%22 width=%22400%22 height=%22400%22/><text x=%2250%%22 y=%2250%%22 text-anchor=%22middle%22 fill=%22%238B4513%22 font-size=%2230%22 font-family=%22sans-serif%22>🐴 %3C/text%3E</svg>'">
+            {% else %}
+            <div class="bg-light d-flex align-items-center justify-content-center" style="height:400px;">
+                <span style="font-size:5rem;">🐴</span>
+            </div>
+            {% endif %}
+            <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <h3 class="brand mb-0">{{ candidate.horse_profile.display_name }}</h3>
+                        <p class="text-muted">
+                            {{ candidate.horse_profile.gender|title if candidate.horse_profile.gender }}
+                            &bull; {{ candidate.horse_profile.age }} years young
+                            &bull; {{ candidate.horse_profile.breed }}
+                        </p>
+                    </div>
+                    <div class="text-end">
+                        {% if candidate.horse_profile.height_hands %}
+                        <span class="badge bg-secondary">{{ candidate.horse_profile.height_hands }}hh</span>
+                        {% endif %}
+                        {% if candidate.horse_profile.coat_color %}
+                        <span class="badge" style="background:{{ candidate.horse_profile.coat_color.lower() if candidate.horse_profile.coat_color.lower() in ['black','brown','chestnut','bay'] else '#8B4513' }}; color:white;">{{ candidate.horse_profile.coat_color }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <p class="mt-2">{{ candidate.horse_profile.bio or 'No bio yet — mysterious!' }}</p>
+
+                <div class="row mt-3 text-center">
+                    <div class="col-4">
+                        <small class="text-muted d-block">Discipline</small>
+                        <strong>{{ candidate.horse_profile.riding_discipline or 'Any' }}</strong>
+                    </div>
+                    <div class="col-4">
+                        <small class="text-muted d-block">Temperament</small>
+                        <strong>{{ candidate.horse_profile.temperament|title or 'Any' }}</strong>
+                    </div>
+                    <div class="col-4">
+                        <small class="text-muted d-block">Region</small>
+                        <strong>{{ candidate.horse_profile.stable_region or 'Any' }}</strong>
+                    </div>
+                </div>
+
+                <hr>
+
+                <div class="row text-center small">
+                    <div class="col-6">
+                        <span class="text-muted">🎯 {{ candidate.horse_profile.experience_level or 'N/A' }}</span>
+                    </div>
+                    <div class="col-6">
+                        <span class="text-muted">🍎 {{ candidate.horse_profile.favorite_treat or 'All treats' }}</span>
+                    </div>
+                </div>
+                {% if candidate.horse_profile.ideal_date_activity %}
+                <div class="text-center mt-2">
+                    <small class="text-muted">Ideal date: </small>
+                    <small><strong>{{ candidate.horse_profile.ideal_date_activity }}</strong></small>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Swipe Buttons -->
+        <div class="d-flex justify-content-center gap-4 mt-4">
+            <form method="POST" action="{{ url_for('matches.swipe', target_id=candidate.id, action='pass') }}" class="swipe-form">
+                <button type="submit" class="btn btn-lg btn-outline-secondary rounded-circle" style="width:70px;height:70px;font-size:2rem;" title="Pass">
+                    ✕
+                </button>
+            </form>
+            <div class="text-center">
+                <small class="text-muted">{{ page }} / {{ total_pages }}</small>
+                {% if total > 0 %}
+                <div class="progress mt-1" style="height:4px;width:200px;">
+                    <div class="progress-bar bg-success" style="width:{{ (page / total_pages * 100)|round }}%"></div>
+                </div>
+                {% endif %}
+            </div>
+            <form method="POST" action="{{ url_for('matches.swipe', target_id=candidate.id, action='like') }}" class="swipe-form">
+                <button type="submit" class="btn btn-lg btn-success rounded-circle" style="width:70px;height:70px;font-size:2rem;" title="Like!">
+                    ♥
+                </button>
+            </form>
+        </div>
+        {% else %}
+        <div class="card horse-card text-center p-5">
+            <div class="hero-icon">🌅</div>
+            <h3 class="brand">All Caught Up!</h3>
+            <p class="text-muted">No new horses to show right now. Check back later or edit your profile to get better matches.</p>
+            <a href="{{ url_for('profiles.edit_profile') }}" class="btn btn-horse">Update Profile</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% block scripts %}
+<script>
+    // Keyboard shortcuts
+    $(document).keydown(function(e) {
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+        if (e.key === 'ArrowLeft') {
+            $('.swipe-form:first button').click();
+        } else if (e.key === 'ArrowRight') {
+            $('.swipe-form:last button').click();
+        }
+    });
+
+    // Handle swipe forms via AJAX
+    $('.swipe-form').on('submit', function(e) {
+        e.preventDefault();
+        var form = $(this);
+        $.ajax({
+            type: 'POST',
+            url: form.attr('action'),
+            dataType: 'json',
+            success: function(data) {
+                if (data.matched) {
+                    // IT'S A MATCH!
+                    $('#matchModal .match-prompt').text(data.prompt);
+                    var matchModal = new bootstrap.Modal(document.getElementById('matchModal'));
+                    matchModal.show();
+                    // Reload after modal close
+                    $('#matchModal').on('hidden.bs.modal', function() {
+                        location.reload();
+                    });
+                } else {
+                    location.reload();
+                }
+            },
+            error: function() {
+                location.reload();
+            }
+        });
+    });
+</script>
+
+<!-- Match Modal -->
+<div class="modal fade" id="matchModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content text-center p-4" style="border-radius:20px;">
+            <div class="modal-body">
+                <div class="match-pulse" style="font-size:4rem;">💕</div>
+                <h2 class="brand" style="color:#FF6B6B;">It's a Match!</h2>
+                <p class="match-prompt lead"></p>
+                <button class="btn btn-horse mt-3" data-bs-dismiss="modal">Keep Browsing</button>
+                <a href="{{ url_for('matches.my_matches') }}" class="btn btn-horse-outline mt-3 ms-2">View Matches</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% endblock %}

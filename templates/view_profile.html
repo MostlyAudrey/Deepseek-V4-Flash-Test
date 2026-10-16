@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center mt-4">
+    <div class="col-md-6">
+        <div class="card horse-card">
+            {% if profile_user.horse_profile.photo_url %}
+            <img src="{{ profile_user.horse_profile.photo_url }}" class="profile-img" alt="{{ profile_user.horse_profile.display_name }}">
+            {% else %}
+            <div class="bg-light d-flex align-items-center justify-content-center" style="height:400px;">
+                <span style="font-size:5rem;">🐴</span>
+            </div>
+            {% endif %}
+            <div class="card-body p-4">
+                <h2 class="brand">{{ profile_user.horse_profile.display_name }}</h2>
+                <p class="text-muted">@{{ profile_user.username }}</p>
+                <p>{{ profile_user.horse_profile.bio or 'No bio set.' }}</p>
+
+                <div class="row mt-4">
+                    <div class="col-6 mb-3">
+                        <small class="text-muted d-block">Gender</small>
+                        <strong>{{ profile_user.horse_profile.gender|title or 'N/A' }}</strong>
+                    </div>
+                    <div class="col-6 mb-3">
+                        <small class="text-muted d-block">Breed</small>
+                        <strong>{{ profile_user.horse_profile.breed or 'N/A' }}</strong>
+                    </div>
+                    <div class="col-6 mb-3">
+                        <small class="text-muted d-block">Age</small>
+                        <strong>{{ profile_user.horse_profile.age or 'N/A' }} years</strong>
+                    </div>
+                    <div class="col-6 mb-3">
+                        <small class="text-muted d-block">Height</small>
+                        <strong>{{ profile_user.horse_profile.height_hands or 'N/A' }} hands</strong>
+                    </div>
+                    <div class="col-6 mb-3">
+                        <small class="text-muted d-block">Coat Color</small>
+                        <strong>{{ profile_user.horse_profile.coat_color or 'N/A' }}</strong>
+                    </div>
+                    <div class="col-6 mb-3">
+                        <small class="text-muted d-block">Markings</small>
+                        <strong>{{ profile_user.horse_profile.markings or 'None' }}</strong>
+                    </div>
+                </div>
+
+                <hr>
+                <h5>Horse Profile</h5>
+                <div class="row">
+                    <div class="col-6 mb-2">
+                        <small class="text-muted d-block">Discipline</small>
+                        <strong>{{ profile_user.horse_profile.riding_discipline|title or 'Any' }}</strong>
+                    </div>
+                    <div class="col-6 mb-2">
+                        <small class="text-muted d-block">Experience</small>
+                        <strong>{{ profile_user.horse_profile.experience_level|title or 'Any' }}</strong>
+                    </div>
+                    <div class="col-6 mb-2">
+                        <small class="text-muted d-block">Temperament</small>
+                        <strong>{{ profile_user.horse_profile.temperament|title or 'Any' }}</strong>
+                    </div>
+                    <div class="col-6 mb-2">
+                        <small class="text-muted d-block">Region</small>
+                        <strong>{{ profile_user.horse_profile.stable_region or 'Any' }}</strong>
+                    </div>
+                </div>
+
+                {% if profile_user.horse_profile.ideal_date_activity %}
+                <hr>
+                <p><strong>Ideal Date:</strong> {{ profile_user.horse_profile.ideal_date_activity }}</p>
+                {% endif %}
+                {% if profile_user.horse_profile.favorite_treat %}
+                <p><strong>Favorite Treat:</strong> {{ profile_user.horse_profile.favorite_treat }}</p>
+                {% endif %}
+                <p>
+                    <strong>Foals?</strong>
+                    {{ 'Yes, wants offspring!' if profile_user.horse_profile.wants_offspring else 'Not looking for foals' }}
+                </p>
+            </div>
+        </div>
+        <div class="text-center mt-3">
+            <a href="{{ url_for('matches.browse') }}" class="btn btn-horse-outline">Back to Browsing</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

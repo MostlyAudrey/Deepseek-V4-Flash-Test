@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: horseuser
+      POSTGRES_PASSWORD: horsepwd
+      POSTGRES_DB: horsetinder
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U horseuser -d horsetinder"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  web:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      FLASK_APP: app.py
+      FLASK_ENV: development
+      SECRET_KEY: change-this-to-a-random-secret-key
+      DATABASE_URL: postgresql://horseuser:horsepwd@db:5432/horsetinder
+      SITE_URL: http://localhost:5000
+    depends_on:
+      db:
+        condition: service_healthy
+    command: >
+      sh -c "python -c 'from app import create_app; from extensions import db; app = create_app(); app.app_context().push(); db.create_all()' &&
+             python seed.py &&
+             gunicorn --bind 0.0.0.0:5000 --workers 4 --reload 'app:create_app()'"
+
+volumes:
+  pgdata:
